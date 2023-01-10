@@ -2,7 +2,8 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { loadModel } from './modelLoader'
-import { PLAYER_SPEED } from './consts/player'
+import { MAX_DISTANCE_FOR_INTERSECT, PLAYER_SPEED } from './consts/constVariable'
+import { applyForce } from './physics'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -39,20 +40,27 @@ controls.enableDamping = true
 // object map
 let objects = [];
 let player = null;
+const raycasterFromCharacter = new THREE.Raycaster();
 
 async function addCharacter() {
     player = await loadModel(scene, "models/stickman.OBJ");
     scene.add(player);
     // 크기 너무 커서 작게 조절
     player.scale.multiplyScalar(0.03);
+    raycasterFromCharacter.set(player.position, new THREE.Vector3(-1, 0, 0))
+    //raycaster.ray.at(MAX_DISTANCE_FOR_INTERSECT);
 }
 
 addCharacter();
-// temporary cube
+
+let blocks = [];
+
+// temporary blocks
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
 const cube = new THREE.Mesh( geometry, material );
 cube.position.x -= 1;
+blocks.push(cube);
 scene.add( cube );
 /**
  * Renderer
@@ -79,32 +87,38 @@ window.addEventListener("keydown",  function (event) {
     if(player == null || player == undefined) {
         return;
     }
+    let directionVector = new THREE.Vector3(0, 0, 0);
 
     switch (event.code) {
         case "KeyA":
             console.log("key AAa");
             //player.position.set(player.position.x - PLAYER_SPEED, player.position.y, player.position.z)
             player.position.x -= PLAYER_SPEED;
+            directionVector.x = -1;
             break;
         case "KeyD":
             player.position.x += PLAYER_SPEED;
+            directionVector.x = 1;
             break;
         case "KeyW":
             player.position.z += PLAYER_SPEED;
+            directionVector.z = 1;
             break;
         case "KeyS":
             player.position.z -= PLAYER_SPEED;
-            break;
+            directionVector.z = -1;
+            break;    
     }
 
+    raycasterFromCharacter.set(player.position, directionVector)
+    let intersections = raycasterFromCharacter.intersectObjects(blocks);
+
+    let distanceVector = directionVector.multiplyScalar(PLAYER_SPEED)
+    intersections.forEach(intersection => {
+        if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
+            applyForce(distanceVector, intersection.object)
+        }
+    
+    })
 });
 
-    /*if(keyController.keys['keyA']) {
-        console.log(character);
-        /*const newPos = new THREE.Vector3(
-            targetpos.x + (-dir.z * CAMERA_SPEED)
-            , targetpos.y
-            , targetpos.z
-        );*/
-
-    //}
