@@ -76,6 +76,15 @@ module.exports = {
                 {
                     filename: 'assets/fonts/[hash][ext]'
                 }
+            },
+            // Shaders
+            {
+                test: /\.(OBJ|FBX|obj|fbx)$/,
+                type: 'asset/source',
+                generator:
+                {
+                    filename: 'assets/models/[hash][ext]'
+                }
             }
         ]
     }
