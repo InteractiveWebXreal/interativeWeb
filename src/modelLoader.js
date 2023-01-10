@@ -12,17 +12,19 @@ function getExtension(path) {
     return path.substring(startIndexOfExtension).toLowerCase();
 }
 
-export function addModel(scene, path, scale) {
+// 모델로딩이 api 불러오는 것처럼 비동기로 일어나서 async await 을 사용했습니다. 
+export async function loadModel(scene, path) {
     let extension = getExtension(path);
    
     let loader = loaders[extension]
-    loader.load(
+
+    return new Promise((resolve) => {
+        loader.load(
         // resource URL
         path,
         // called when resource is loaded
-        function ( object ) { 
-            object.scale.multiplyScalar(scale);
-            scene.add( object );
+        function ( object ) {
+            resolve(object);
         },
         // called when loading is in progresses
         function ( xhr ) {
@@ -35,5 +37,6 @@ export function addModel(scene, path, scale) {
             console.log( 'An error happened' );
     
         }
-    );
+        );
+    })
 }

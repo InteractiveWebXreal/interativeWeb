@@ -1,7 +1,8 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { addModel } from './modelLoader'
+import { loadModel } from './modelLoader'
+import { KeyController } from './KeyController'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -36,9 +37,23 @@ const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
 // object map
-let objects = {};
+let objects = [];
 
-addModel(scene, "models/stickman.OBJ", 0.03);
+async function addCharacter() {
+    const character = await loadModel(scene, "models/stickman.OBJ")
+    scene.add(character);
+    character.scale.multiplyScalar(0.03);
+    console.log(character)
+}
+
+addCharacter();
+// temporary cube
+const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+const cube = new THREE.Mesh( geometry, material );
+cube.position.x -= 1;
+scene.add( cube );
+const keyController = new KeyController();
 
 /**
  * Renderer
@@ -57,6 +72,21 @@ const tick = () => {
     renderer.render(scene, camera)
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+    characterMove();
 }
 
 tick()
+
+
+function characterMove() {
+    
+    if(keyController.keys['keyA']) {
+        
+        /*const newPos = new THREE.Vector3(
+            targetpos.x + (-dir.z * CAMERA_SPEED)
+            , targetpos.y
+            , targetpos.z
+        );*/
+
+    }
+}
