@@ -41,9 +41,9 @@ let objects = [];
 let player = null;
 
 async function addCharacter() {
-    player = new THREE.Group();
-    player.add(await loadModel(scene, "models/stickman.OBJ"));
+    player = await loadModel(scene, "models/stickman.OBJ");
     scene.add(player);
+    // 크기 너무 커서 작게 조절
     player.scale.multiplyScalar(0.03);
 }
 
