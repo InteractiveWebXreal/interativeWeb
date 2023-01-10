@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { loadModel } from './modelLoader'
 import { MAX_DISTANCE_FOR_INTERSECT, PLAYER_SPEED } from './consts/constVariable'
 import { applyForce } from './physics'
+import { Player } from './player'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -43,12 +44,10 @@ let player = null;
 const raycasterFromCharacter = new THREE.Raycaster();
 
 async function addCharacter() {
-    player = await loadModel(scene, "models/stickman.OBJ");
-    scene.add(player);
-    // 크기 너무 커서 작게 조절
-    player.scale.multiplyScalar(0.03);
-    raycasterFromCharacter.set(player.position, new THREE.Vector3(-1, 0, 0))
-    //raycaster.ray.at(MAX_DISTANCE_FOR_INTERSECT);
+    let object = await loadModel(scene, "models/stickman.OBJ")
+    player = new Player(object);
+    scene.add(player.getObject());
+    raycasterFromCharacter.set(player.getPosition, new THREE.Vector3(-1, 0, 0))
 }
 
 addCharacter();
@@ -91,34 +90,29 @@ window.addEventListener("keydown",  function (event) {
 
     switch (event.code) {
         case "KeyA":
-            console.log("key AAa");
-            //player.position.set(player.position.x - PLAYER_SPEED, player.position.y, player.position.z)
-            player.position.x -= PLAYER_SPEED;
             directionVector.x = -1;
             break;
         case "KeyD":
-            player.position.x += PLAYER_SPEED;
             directionVector.x = 1;
             break;
         case "KeyW":
-            player.position.z += PLAYER_SPEED;
             directionVector.z = 1;
             break;
         case "KeyS":
-            player.position.z -= PLAYER_SPEED;
             directionVector.z = -1;
             break;    
     }
 
-    raycasterFromCharacter.set(player.position, directionVector)
+    let distanceVector = directionVector.multiplyScalar(PLAYER_SPEED)
+    player.move(distanceVector);
+
+    raycasterFromCharacter.set(player.getPosition(), directionVector)
     let intersections = raycasterFromCharacter.intersectObjects(blocks);
 
-    let distanceVector = directionVector.multiplyScalar(PLAYER_SPEED)
     intersections.forEach(intersection => {
         if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
             applyForce(distanceVector, intersection.object)
         }
-    
     })
 });
 
