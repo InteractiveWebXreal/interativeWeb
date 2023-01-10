@@ -2,7 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { loadModel } from './modelLoader'
-import { KeyController } from './KeyController'
+import { PLAYER_SPEED } from './consts/player'
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -38,12 +38,13 @@ controls.enableDamping = true
 
 // object map
 let objects = [];
+let player = null;
 
 async function addCharacter() {
-    const character = await loadModel(scene, "models/stickman.OBJ")
-    scene.add(character);
-    character.scale.multiplyScalar(0.03);
-    console.log(character)
+    player = new THREE.Group();
+    player.add(await loadModel(scene, "models/stickman.OBJ"));
+    scene.add(player);
+    player.scale.multiplyScalar(0.03);
 }
 
 addCharacter();
@@ -53,8 +54,6 @@ const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
 const cube = new THREE.Mesh( geometry, material );
 cube.position.x -= 1;
 scene.add( cube );
-const keyController = new KeyController();
-
 /**
  * Renderer
  */
@@ -72,21 +71,40 @@ const tick = () => {
     renderer.render(scene, camera)
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-    characterMove();
 }
 
 tick()
 
+window.addEventListener("keydown",  function (event) {
+    if(player == null || player == undefined) {
+        return;
+    }
 
-function characterMove() {
-    
-    if(keyController.keys['keyA']) {
-        
+    switch (event.code) {
+        case "KeyA":
+            console.log("key AAa");
+            //player.position.set(player.position.x - PLAYER_SPEED, player.position.y, player.position.z)
+            player.position.x -= PLAYER_SPEED;
+            break;
+        case "KeyD":
+            player.position.x += PLAYER_SPEED;
+            break;
+        case "KeyW":
+            player.position.z += PLAYER_SPEED;
+            break;
+        case "KeyS":
+            player.position.z -= PLAYER_SPEED;
+            break;
+    }
+
+});
+
+    /*if(keyController.keys['keyA']) {
+        console.log(character);
         /*const newPos = new THREE.Vector3(
             targetpos.x + (-dir.z * CAMERA_SPEED)
             , targetpos.y
             , targetpos.z
         );*/
 
-    }
-}
+    //}
