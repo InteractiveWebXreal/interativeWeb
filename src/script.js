@@ -3,7 +3,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { loadModel } from './modelLoader'
 import { MAX_DISTANCE_FOR_INTERSECT, PLAYER_SPEED } from './consts/constVariable'
-import { applyForce } from './physics'
 import { Player } from './player'
 
 // Canvas
@@ -55,7 +54,7 @@ addCharacter();
 let blocks = [];
 
 // temporary blocks
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
 const cube = new THREE.Mesh( geometry, material );
 cube.position.x -= 1;
@@ -106,12 +105,13 @@ window.addEventListener("keydown",  function (event) {
     let distanceVector = directionVector.multiplyScalar(PLAYER_SPEED)
     player.move(distanceVector);
 
+    console.log(player.getPosition())
     raycasterFromCharacter.set(player.getPosition(), directionVector)
     let intersections = raycasterFromCharacter.intersectObjects(blocks);
 
     intersections.forEach(intersection => {
         if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
-            applyForce(distanceVector, intersection.object)
+            player.tryHoldObject(intersection.object)
         }
     })
 });
