@@ -1,5 +1,6 @@
 import * as THREE from 'three'
-import { MAX_DISTANCE_FOR_INTERSECT } from './consts/constVariable';
+import { BLOOM_SCENE, ENTIRE_SCENE } from './consts/camera';
+import { MAX_DISTANCE_FOR_INTERSECT } from './consts/physicalQuantity';
 export class Player {
     constructor(object) {
         this.group = new THREE.Group();
@@ -33,6 +34,7 @@ export class Player {
         box.position.x += (MAX_DISTANCE_FOR_INTERSECT + 0.6);
         box.position.z += 0.3;
         this.group.add(box);
+        this.isHavingBox = true;
         return true;
 
 
