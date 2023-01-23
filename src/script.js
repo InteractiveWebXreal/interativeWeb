@@ -51,6 +51,7 @@ let objects = [];
 let player = null;
 const raycasterFromCharacter = new THREE.Raycaster();
 
+
 async function addCharacter() {
     let object = await loadModel(scene, "models/stickman.OBJ")
     player = new Player(object);
@@ -59,8 +60,6 @@ async function addCharacter() {
 }
 
 addCharacter();
-
-let blocks = [];
 
 const renderScene = new RenderPass(scene, camera);
 
@@ -77,6 +76,7 @@ bloomPass.threshold = 0;
 bloomPass.strength = 1; //intensity of glow
 bloomPass.radius = 0;
 
+let blocks = [];
 function makeAndAddBlock(color, xOffset) {
     const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
     const material = new THREE.MeshBasicMaterial( {color: color} );
@@ -92,13 +92,22 @@ makeAndAddBlock(0x00ff00, -1);
 makeAndAddBlock(0xff00ff, 2);
 makeAndAddBlock(0x0000ff, -3);
 
-const geometry = new THREE.PlaneGeometry(1, 1);
-const material = new THREE.MeshBasicMaterial( {color: 0x00ff00, side: THREE.DoubleSide} );
-const plane = new THREE.Mesh( geometry, material );
-plane.rotation.x = -0.4*Math.PI;
-plane.position.x -=6;
-plane.position.y -= 1;
-scene.add( plane );
+let blockDestinations = [];
+
+function makeAndAddBlockDestination(color,  xOffset, zOffset) {
+    const geometry = new THREE.PlaneGeometry(1, 1);
+    const material = new THREE.MeshBasicMaterial( {color: color, side: THREE.DoubleSide} );
+    const plane = new THREE.Mesh( geometry, material );
+    plane.rotation.x = -0.4*Math.PI;
+    plane.position.x +=xOffset;
+    plane.position.y -= 1;
+    plane.position.z += zOffset;
+    
+    blockDestinations.push(plane);
+    scene.add( plane );
+}
+
+makeAndAddBlockDestination(0x00ff00, -6, 0)
 
 // temporary blocks
 
@@ -108,6 +117,7 @@ scene.add( plane );
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
+
 renderer.setClearColor(0x000000, 1)
 renderer.setSize(sizes.width, sizes.height)
 
@@ -198,16 +208,31 @@ window.addEventListener("keydown",  function (event) {
     let distanceVector = directionVector.multiplyScalar(PLAYER_SPEED)
     player.move(distanceVector);
 
-    console.log(player.getPosition())
     raycasterFromCharacter.set(player.getPosition(), directionVector)
-    let intersections = raycasterFromCharacter.intersectObjects(blocks);
+    let blockIntersections = raycasterFromCharacter.intersectObjects(blocks);
+    let planeIntersections = raycasterFromCharacter.intersectObjects(blockDestinations);
 
-
-    intersections.forEach(intersection => {
-     
+    blockIntersections.forEach(intersection => {
         if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
             player.tryHoldObject(intersection.object)
         }
     })
+
+    blockDestinations.forEach((blockDestination) => {
+        console.log(event.code)
+        if(event.code == "Space") {
+            player.tryPutDown(blockDestination)
+        }
+    })
+
+    /*planeIntersections.forEach(planeIntersection => {
+        console.log(planeIntersection.distance);
+        if(planeIntersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
+            console.log(event.code);
+            if(event.code == "KeySpace" ) {
+                player.tryPutDown(planeIntersection);
+            }
+        }
+    })*/
 });
 
