@@ -8,6 +8,8 @@ import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/
 import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { ShaderPass} from "/node_modules/three/examples/jsm/postprocessing/ShaderPass.js";
+import { TextGeometry } from '/node_modules/three/examples/jsm/geometries/TextGeometry.js';
+import { FontLoader } from '/node_modules/three/examples/jsm/loaders/FontLoader'
 import { BLOOM_SCENE, ENTIRE_SCENE } from './consts/camera'
 import vertexShader from './shader/vertex.glsl'
 import fragmentShader from './shader/fragment.glsl'
@@ -19,24 +21,32 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 const sizes = {
-    width: 800,
-    height: 600
+    width: 1920,
+    height: 1080
 }
 
 /*
 lights
 */
-var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+var ambientLight = new THREE.AmbientLight( 0x888888, 0.6 );
 scene.add( ambientLight );
 
-var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.set(1024, 1024);
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.camera.left = -7;
 
+directionalLight.shadow.camera.top = 7;
+directionalLight.shadow.camera.right = 7;
+directionalLight.shadow.camera.bottom = -7;
+directionalLight.position.set(10, 10, 10);
+scene.add(directionalLight);
 /**
  * Camera
  */
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.add(pointLight);
 camera.position.z = 3
 // camera.lookAt(new THREE.Vector3(0, - 1, 0))
 scene.add(camera)
@@ -51,12 +61,13 @@ let objects = [];
 let player = null;
 const raycasterFromCharacter = new THREE.Raycaster();
 
-
 async function addCharacter() {
-    let object = await loadModel(scene, "models/stickman.OBJ")
+    const scale = 0.3
+    let object = await loadModel(scene, "models/0128_test.fbx", scale)
     player = new Player(object);
+    
     scene.add(player.getObject());
-    raycasterFromCharacter.set(player.getPosition, new THREE.Vector3(-1, 0, 0))
+    raycasterFromCharacter.set(player.getPosition, new THREE.Vector3(-1, 0, -2))
 }
 
 addCharacter();
@@ -85,8 +96,17 @@ function makeAndAddBlock(color, xOffset) {
 
     blocks.push(cube);
     scene.add( cube );
-    cube.layers.enable(BLOOM_SCENE);
+    //cube.layers.enable(BLOOM_SCENE);
 }
+
+async function addSpecialBlock() {
+    const scale = 0.005;
+    let object = await loadModel(scene, "models/0201_cube.fbx", scale)
+    object.position.x -= 3;
+    scene.add(object)
+}
+
+addSpecialBlock();
 
 makeAndAddBlock(0x00ff00, -1);
 makeAndAddBlock(0xff00ff, 2);
@@ -102,9 +122,30 @@ function makeAndAddBlockDestination(color,  xOffset, zOffset) {
     plane.position.x +=xOffset;
     plane.position.y -= 1;
     plane.position.z += zOffset;
+
+    let loader = new FontLoader();
+
+    const textGeometry = new TextGeometry( '블록에 가까이 가서 스페이스를 눌러 블록을 바닥위에 놓으세요!', {
+		size: 20,
+		height: 5,
+		curveSegments: 12,
+		bevelEnabled: true,
+		bevelThickness: 10,
+		bevelSize: 8,
+		bevelOffset: 0,
+		bevelSegments: 5
+	})
     
+    const fillMaterial = new THREE.MeshPhongMaterial({color});
+    const text = new THREE.Mesh(geometry, fillMaterial);
+    text.position.x += xOffset;
+    text.position.y -= 1;
+    text.position.z += zOffset;
+
     blockDestinations.push(plane);
     scene.add( plane );
+
+
 }
 
 makeAndAddBlockDestination(0x00ff00, -6, 0)
@@ -140,21 +181,17 @@ function darkenNonBloomed( obj ) {
 }
 
 function restoreMaterial( obj ) {
-
     if ( materials[ obj.uuid ] ) {
-
         obj.material = materials[ obj.uuid ];
         delete materials[ obj.uuid ];
-
     }
-
 }
 
 const finalPass = new ShaderPass(
     new THREE.ShaderMaterial( {
         uniforms: {
             baseTexture: { value: null },
-            bloomTexture: { value: bloomComposer.renderTarget2.texture }
+            //bloomTexture: { value: bloomComposer.renderTarget2.texture }
         },
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
@@ -176,7 +213,7 @@ const tick = () => {
     window.requestAnimationFrame(tick)
     bloomComposer.renderToScreen = false;
     scene.traverse( darkenNonBloomed );
-	bloomComposer.render();
+	//bloomComposer.render();
 	scene.traverse( restoreMaterial );
     finalComposer.render();
 
@@ -213,7 +250,7 @@ window.addEventListener("keydown",  function (event) {
     let planeIntersections = raycasterFromCharacter.intersectObjects(blockDestinations);
 
     blockIntersections.forEach(intersection => {
-        if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
+        if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT && event.code == "Space") {
             player.tryHoldObject(intersection.object)
         }
     })
@@ -224,15 +261,5 @@ window.addEventListener("keydown",  function (event) {
             player.tryPutDown(blockDestination)
         }
     })
-
-    /*planeIntersections.forEach(planeIntersection => {
-        console.log(planeIntersection.distance);
-        if(planeIntersection.distance < MAX_DISTANCE_FOR_INTERSECT) {
-            console.log(event.code);
-            if(event.code == "KeySpace" ) {
-                player.tryPutDown(planeIntersection);
-            }
-        }
-    })*/
 });
 

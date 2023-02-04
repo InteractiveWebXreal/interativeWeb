@@ -5,8 +5,9 @@ export class Player {
         this.group = new THREE.Group();
         this.player = object;
         this.player.scale.multiplyScalar(0.03);
+        let axis = new THREE.Vector3(0,1,0);
+        this.player.rotateOnAxis(axis, -1);
         this.group.add(this.player);
-         // 크기 너무 커서 작게 조절
         this.isHavingBox = false;
         this.box = null;
     }
@@ -14,6 +15,7 @@ export class Player {
     getPosition() {
         return this.group.position;
     }
+
 
     move(value) {
         this.group.position.x += value.x; 
@@ -53,7 +55,7 @@ export class Player {
         playerPosition.y = plane.position.y
 
         if(plane.position.distanceTo(playerPosition) < 0.1 && plane.material.color.equals(this.box.material.color)) {
-            console.log("aaaaa")
+    
             this.box.position.x = plane.position.x;
             this.box.position.y = plane.position.y + 0.4;
             this.box.position.z = plane.position.z;
