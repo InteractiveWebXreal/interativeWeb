@@ -1,0 +1,69 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\LEE\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add connon-es
+
+PATH: 
+  C:\Program Files\Amazon Corretto\jdk11.0.17_8\bin;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files\ImageMagick-7.1.0-Q16;C:\Program Files\ImageMagick-7.1.0-Q16-HDRI;C:\Program Files\Zulu\zulu-8\bin\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\data\db\bin;C:\Program Files\Git\cmd;C:\Program Files (x86)\FontForgeBuilds\bin;C:\Program Files\Amazon Corretto\jdk11.0.17_8\bin;C:\Program Files\nodejs\;C:\MinGW\bin;C:\Program Files\MySQL\MySQL Server 8.0\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\LEE\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\LEE\AppData\Local\Programs\Python\Python310\;C:\Users\LEE\anaconda3;C:\Users\LEE\anaconda3\Library\mingw-w64\bin;C:\Users\LEE\anaconda3\Library\usr\bin;C:\Users\LEE\anaconda3\Library\bin;C:\Users\LEE\anaconda3\Scripts;C:\Users\LEE\AppData\Local\Microsoft\WindowsApps;C:\Users\LEE\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Zulu\zulu-8\bin;C:\John\run;C:\Users\LEE\AppData\Local\GitHubDesktop\bin;C:\Users\LEE\AppData\Roaming\npm;C:\Users\LEE\AppData\Local\atom\bin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  16.16.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/connon-es: Not found
+      at Request.params.callback [as _callback] (C:\Users\LEE\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:67029:18)
+      at Request.self.callback (C:\Users\LEE\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140883:22)
+      at Request.emit (node:events:527:28)
+      at Request.<anonymous> (C:\Users\LEE\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141855:10)
+      at Request.emit (node:events:527:28)
+      at IncomingMessage.<anonymous> (C:\Users\LEE\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141777:12)
+      at Object.onceWrapper (node:events:641:28)
+      at IncomingMessage.emit (node:events:539:35)
+      at endReadableNT (node:internal/streams/readable:1345:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+    "name": "threejs-study",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "build": "cross-env NODE_ENV=production webpack --progress",
+      "start": "webpack serve --progress"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "@babel/cli": "^7.20.7",
+      "@babel/core": "^7.20.12",
+      "@babel/preset-env": "^7.20.2",
+      "babel-loader": "^9.1.2",
+      "clean-webpack-plugin": "^4.0.0",
+      "copy-webpack-plugin": "^11.0.0",
+      "core-js": "^3.27.1",
+      "cross-env": "^7.0.3",
+      "html-webpack-plugin": "^5.5.0",
+      "source-map-loader": "^4.0.1",
+      "terser-webpack-plugin": "^5.3.6",
+      "webpack": "^5.75.0",
+      "webpack-cli": "^5.0.1",
+      "webpack-dev-server": "^4.11.1"
+    },
+    "dependencies": {
+      "build": "^0.1.4",
+      "start": "^5.1.0",
+      "three": "^0.148.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

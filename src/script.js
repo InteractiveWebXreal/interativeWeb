@@ -13,21 +13,7 @@ import { FontLoader } from '/node_modules/three/examples/jsm/loaders/FontLoader'
 import { BLOOM_SCENE, ENTIRE_SCENE } from './consts/camera'
 import vertexShader from './shader/vertex.glsl'
 import fragmentShader from './shader/fragment.glsl'
-
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
-
-// Scene
-const scene = new THREE.Scene()
-
-const sizes = {
-    width: 1920,
-    height: 1080
-}
-
 /*
-lights
-*/
 var ambientLight = new THREE.AmbientLight( 0x888888, 0.6 );
 scene.add( ambientLight );
 
@@ -42,9 +28,7 @@ directionalLight.shadow.camera.right = 7;
 directionalLight.shadow.camera.bottom = -7;
 directionalLight.position.set(10, 10, 10);
 scene.add(directionalLight);
-/**
- * Camera
- */
+
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 3
@@ -152,9 +136,6 @@ makeAndAddBlockDestination(0x00ff00, -6, 0)
 
 // temporary blocks
 
-/**
- * Renderer
- */
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
@@ -203,9 +184,7 @@ const finalComposer = new EffectComposer( renderer );
 finalComposer.addPass( renderScene );
 finalComposer.addPass( finalPass );
 
-/**
- * Animate
- */
+
 const tick = () => {
     controls.update()
     renderer.render(scene, camera)
@@ -263,3 +242,4 @@ window.addEventListener("keydown",  function (event) {
     })
 });
 
+*/
