@@ -174,7 +174,7 @@ for (let i = 0; i < numberOfBlock; i++) {
 	});
 	objects.push(block1, block2, block3, block4, block5);
 }
-
+//hi
 // 플레이어
 const player = new Player({
 	name: 'player',
