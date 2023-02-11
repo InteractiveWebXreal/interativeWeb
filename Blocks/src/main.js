@@ -214,8 +214,10 @@ function checkClickedObject(mesh) {
 		console.log("prev_step" + prev_steps[0]);
 		
 		if (prev_steps[0] + 5 === mesh.step || prev_steps[0] + 6 === mesh.step || prev_steps[0] + 4 === mesh.step) {
-			player.actions[2].stop();
-			player.actions[2].play();
+			//player.actions[2].stop();
+			//player.actions[2].play();
+			console.log(player)
+			player.mesh.position.x = player.mesh.position.x+2;
 			jumping = true;
 			cm2.step++;
 
@@ -244,8 +246,9 @@ function checkClickedObject(mesh) {
 			)
 		}
 		if (prev_steps[0] + 1 === mesh.step || prev_steps[0] - 1 === mesh.step) {
-			player.actions[2].stop();
-			player.actions[2].play();
+			//player.actions[2].stop();
+			//player.actions[2].play();
+			player.mesh.position.x = player.mesh.position.x+2;
 			jumping = true;
 
 			prev_steps.push(mesh.step);
@@ -273,8 +276,9 @@ function checkClickedObject(mesh) {
 			)
 		}
 		if (prev_steps[0] - 5 === mesh.step || prev_steps[0] - 6 === mesh.step || prev_steps[0] - 4 === mesh.step) {
-			player.actions[2].stop();
-			player.actions[2].play();
+			//player.actions[2].stop();
+			//player.actions[2].play();
+			player.mesh.position.x = player.mesh.position.x+2;
 			jumping = true;
 			cm2.step--;
 

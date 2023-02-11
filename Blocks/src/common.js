@@ -5,6 +5,7 @@ import {
 	MeshPhongMaterial
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 import {
 	World,
@@ -14,6 +15,7 @@ import {
 export const cm1 = {
 	scene: new Scene(),
 	gltfLoader: new GLTFLoader(),
+	fbxLoader: new FBXLoader(),
 	mixer: undefined,
 
 	// cannon
