@@ -10,6 +10,7 @@ import { Player } from './Player';
 
 // Renderer
 const canvas = document.querySelector('canvas.webgl');
+
 const renderer = new THREE.WebGLRenderer({
 	canvas,
 	antialias: true,

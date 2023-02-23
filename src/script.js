@@ -13,7 +13,8 @@ import { FontLoader } from '/node_modules/three/examples/jsm/loaders/FontLoader'
 import { BLOOM_SCENE, ENTIRE_SCENE } from './consts/camera'
 import vertexShader from './shader/vertex.glsl'
 import fragmentShader from './shader/fragment.glsl'
-/*
+
+
 var ambientLight = new THREE.AmbientLight( 0x888888, 0.6 );
 scene.add( ambientLight );
 
@@ -35,6 +36,7 @@ camera.position.z = 3
 // camera.lookAt(new THREE.Vector3(0, - 1, 0))
 scene.add(camera)
 
+const canvas = document.querySelector('canvas.webgl')
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
@@ -85,7 +87,7 @@ function makeAndAddBlock(color, xOffset) {
 
 async function addSpecialBlock() {
     const scale = 0.005;
-    let object = await loadModel(scene, "models/0201_cube.fbx", scale)
+    let object = await loadModel(scene, "models/rabbit_0213.fbx", scale)
     object.position.x -= 3;
     scene.add(object)
 }
@@ -242,4 +244,3 @@ window.addEventListener("keydown",  function (event) {
     })
 });
 
-*/

@@ -1836,7 +1836,7 @@
   dependencies:
     "browserslist" "^4.21.4"
 
-"core-js@^3.27.1":
+"core-js@^3.27.2":
   "integrity" "sha512-9ashVQskuh5AZEZ1JdQWp1GqSoC1e1G87MzRqg2gIfVAQ7Qn9K+uFj8EcniUFA4P2NLZfV+TOlX1SzoKfo+s7w=="
   "resolved" "https://registry.npmjs.org/core-js/-/core-js-3.27.2.tgz"
   "version" "3.27.2"
@@ -3909,10 +3909,10 @@
   "resolved" "https://registry.npmjs.org/three-fbx-loader/-/three-fbx-loader-1.0.2.tgz"
   "version" "1.0.2"
 
-"three@^0.140.0":
-  "integrity" "sha512-jcHjbnYspPLDdsDQChmzyAoZ5KhJbgFk6pNGlAIc9fQMvsfPGjF5H9glrngqvb2CR/qXcClMyp5PYdF996lldA=="
-  "resolved" "https://registry.npmjs.org/three/-/three-0.140.0.tgz"
-  "version" "0.140.0"
+"three@^0.140.2":
+  "integrity" "sha512-DdT/AHm/TbZXEhQKQpGt5/iSgBrmXpjU26FNtj1KhllVPTKj1eG4X/ShyD5W2fngE+I1s1wa4ttC4C3oCJt7Ag=="
+  "resolved" "https://registry.npmjs.org/three/-/three-0.140.2.tgz"
+  "version" "0.140.2"
 
 "thunky@^1.0.2":
   "integrity" "sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA=="
