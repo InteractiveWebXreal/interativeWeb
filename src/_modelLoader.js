@@ -10,7 +10,10 @@ import { on } from 'events';
  "a": 68 -> 69 -> 70 -> 71
  "b": 69
  "c": 70
+<<<<<<< HEAD:src/_modelLoader.js
+=======
 
+>>>>>>> origin:src/modelLoader.js
  "a": 68
  "a": 69
  "b": 69

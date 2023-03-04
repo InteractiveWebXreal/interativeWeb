@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { loadModel } from './modelLoader'
+import { loadModel } from './_modelLoader'
 import { MAX_DISTANCE_FOR_INTERSECT, PLAYER_SPEED } from './consts/physicalQuantity'
 import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/RenderPass.js";
