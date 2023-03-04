@@ -7,8 +7,8 @@ import { PreventDragClick } from './PreventDragClick';
 import { Floor } from './Floor';
 import { Block } from './Block';
 import { Player } from './player';
-import { loadModel } from './modelLoader';
-import { RealPlayer } from './realPlayer'
+import { loadModel } from './_modelLoader';
+import { RealPlayer } from './_realPlayer'
 import { LAYER } from './consts/enum';
 
 // Renderer
