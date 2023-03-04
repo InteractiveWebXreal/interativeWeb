@@ -27,20 +27,14 @@ const sizes = {
 
 var ambientLight = new THREE.AmbientLight( 0xffffff, 0.2 );
 
-
-
 var ambientLight2 = new THREE.AmbientLight( 0xffffff, 0.2 );
 ambientLight2.layers.enable(LAYER.BLOCK);
 
 // block: 0.4, character: 3
 
 
-
-
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 3
-
-
 
 camera.add(ambientLight)
 // camera.lookAt(new THREE.Vector3(0, - 1, 0))
@@ -59,7 +53,7 @@ const raycasterFromCharacter = new THREE.Raycaster();
 
 async function addCharacter() {
     const scale = 0.3
-    let object = await loadModel("models/rabbit.fbx", scale, true)
+    let object = await loadModel("models/rabbit.fbx", scale)
     player = new RealPlayer(object);
     
     scene.add(player.getObject());
@@ -71,7 +65,7 @@ addCharacter();
 const renderScene = new RenderPass(scene, camera);
 
 const bloomLayer = new THREE.Layers();
-bloomLayer.set( BLOOM_SCENE );
+bloomLayer.set( BLOOM_SCENE);
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -88,7 +82,7 @@ async function makeAndAddBlock(color, xOffset) {
     let light = new THREE.DirectionalLight(0xffffff, 0.1);
     light.castShadow = true; // true 이면 광원이 그림자를 생성합니다. 기본값은 false 입니다.
     light.position.set( 0, 1, 1 ).normalize();
-    let block = await loadModel("models/" + color + "_cube.fbx", 0.005, false);
+    let block = await loadModel("models/" + color + "_cube.fbx", 0.005);
     let group = new THREE.Object3D();
     group.add(block);
     group.add(light)
@@ -104,8 +98,6 @@ makeAndAddBlock("basic", -1);
 makeAndAddBlock("pink", -2);
 makeAndAddBlock("purple", -3);
 makeAndAddBlock("blue", -4);
-
-
 
 let blockDestinations = [];
 
@@ -164,11 +156,9 @@ const materials = {};
 const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
 
 function darkenNonBloomed( obj ) {
-
     if ( obj.isMesh && bloomLayer.test( obj.layers ) === false ) {
         materials[ obj.uuid ] = obj.material;
         obj.material = darkMaterial;
-
     }
 }
 
@@ -196,17 +186,18 @@ finalComposer.addPass( renderScene );
 finalComposer.addPass( finalPass );
 
 
+
 const tick = () => {
     controls.update()
     renderer.render(scene, camera)
     // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+    // 계산기  
+    window.requestAnimationFrame(tick);
     bloomComposer.renderToScreen = false;
-    scene.traverse( darkenNonBloomed );
+    scene.traverse(darkenNonBloomed);
 	//bloomComposer.render();
 	scene.traverse( restoreMaterial );
     finalComposer.render();
-
 }
 
 tick()
@@ -240,13 +231,14 @@ window.addEventListener("keydown",  function (event) {
     let planeIntersections = raycasterFromCharacter.intersectObjects(blockDestinations);
 
     blockIntersections.forEach(intersection => {
+        console.log(intersection.distance)
         if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT && event.code == "Space") {
             player.tryHoldObject(intersection.object)
         }
     })
 
     blockDestinations.forEach((blockDestination) => {
-        console.log(event.code)
+     
         if(event.code == "Space") {
             player.tryPutDown(blockDestination)
         }

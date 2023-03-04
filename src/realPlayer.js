@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { LAYER } from './consts/enum';
+
 export class RealPlayer {
     constructor(object) {
         this.group = new THREE.Object3D();
@@ -10,10 +11,10 @@ export class RealPlayer {
     
         this.player = object;
 
-        this.player.scale.multiplyScalar(0.03);
-         this.player.position.x = -0.5;
+        this.player.scale.multiplyScalar(0.02);
+         this.player.position.x = 0;
          this.player.position.y = -1;
-         this.player.position.z = 0.5;
+         this.player.position.z = 0.8;
        // this.player.rotateOnAxis(axis, -1);
         this.group.add(this.player);
         this.group.add(characterLight)
@@ -26,6 +27,7 @@ export class RealPlayer {
     }
 
     move(value) {
+        console.log("move")
         this.group.position.x += value.x; 
         this.group.position.y += value.y; 
         this.group.position.z += value.z; 
@@ -35,9 +37,11 @@ export class RealPlayer {
             this.box.position.z += value.z; 
         }
     }
+
     getObject() {
         return this.group
     }
+
     tryHoldObject(box) {
         // 박스 이미 들고 있으면 다른 박스 못 옮기게 하기
         if(this.isHavingBox) {
@@ -49,6 +53,7 @@ export class RealPlayer {
         this.isHavingBox = true;
         return true;
     }
+
     tryPutDown(plane) {
         if(!this.isHavingBox)  {
             return;
