@@ -8,6 +8,11 @@ import { Floor } from './Floor';
 import { Block } from './Block';
 import { Player } from './Player';
 
+
+const CAMERA_SPEED = 5; //해보면서 조정하자.
+const yfinalpos=0;
+let isfall=true;//임의로 테스트.
+
 // Renderer
 const canvas = document.querySelector('canvas.webgl');
 
@@ -331,6 +336,7 @@ function draw() {
 				if (item.modelMesh) {
 					//cannonBody의 위치를 Mesh가 따라가도록
 					item.modelMesh.position.copy(item.cannonBody.position);
+					fall(camera,item,controls)
 				}
 				item.modelMesh.position.y += 0.15;
 			} else {
@@ -356,6 +362,7 @@ function draw() {
 		camera2.position.z = player.cannonBody.position.z;
 	}
 */
+    renderer.render(scene, camera);
 	renderer.setAnimationLoop(draw);
 }
 
@@ -365,6 +372,67 @@ function setSize() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.render(cm1.scene, camera);
 }
+
+
+//fall function 
+
+function fall(camera,target,controls) {
+
+        
+	if(target != null) {
+
+		//카메라 position
+		const origpos = new THREE.Vector3().copy(camera.position);
+
+		//타겟 position
+		const targetpos = new THREE.Vector3().copy(target.modelMesh.position);
+
+		//-----------------------------------------------------------------------------------------------------------------------------
+		
+		//방향 벡터(x2-x1, y2-y1, z2-z1)를 구하고 normalize
+
+		//타겟모델 - 카메라 : 방향벡터
+		const dir = new THREE.Vector3(origpos.x - targetpos.x, origpos.y - targetpos.y, origpos.z - targetpos.z).normalize();
+		
+	   
+	  
+		if(isfall && target.modelMesh.position >yfinalpos) {
+
+			//캐릭터 추락
+			//이건 일단 좌로 이동할 때인데, 
+		
+			const newpos = new THREE.Vector3(
+				targetpos.x  
+				, targetpos.y +(-dir.y * CAMERA_SPEED)//모르겠음 추락시 방향벡터 어케 적용할지.
+				, targetpos.z 
+			);
+			
+			//카메라도 캐릭터 따라 추락
+
+			const camnewpos = new THREE.Vector3(
+				origpos.x  
+				, origpos.y+(-dir.y * CAMERA_SPEED)//모르겠음 추락시 방향벡터 어케 적용할지.
+				, origpos.z 
+			);
+			
+			//타겟 지점 변경
+			controls.target.set(newpos.x, newpos.y, newpos.z);
+			//카메라 위치 변경
+			camera.position.set(camnewpos.x, camnewpos.y, camnewpos.z);
+			
+		}
+		
+		//컨트롤 업데이트
+		//controls.update();
+		//카메라 업데이트
+		camera.updateProjectionMatrix();
+		
+	}
+	
+}
+
+
+
 
 // 이벤트
 const preventDragClick = new PreventDragClick(canvas);
