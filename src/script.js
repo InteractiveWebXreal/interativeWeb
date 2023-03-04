@@ -3,7 +3,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { loadModel } from './_modelLoader'
 import { MAX_DISTANCE_FOR_INTERSECT, PLAYER_SPEED } from './consts/physicalQuantity'
-import { Player } from './player'
 import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js";
@@ -13,26 +12,31 @@ import { FontLoader } from '/node_modules/three/examples/jsm/loaders/FontLoader'
 import { BLOOM_SCENE, ENTIRE_SCENE } from './consts/camera'
 import vertexShader from './shader/vertex.glsl'
 import fragmentShader from './shader/fragment.glsl'
+import { RealPlayer } from './realPlayer'
+import { LAYER } from './consts/enum'
 
 
-var ambientLight = new THREE.AmbientLight( 0x888888, 0.6 );
-scene.add( ambientLight );
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.camera.left = -7;
+// Scene
+const scene = new THREE.Scene()
 
-directionalLight.shadow.camera.top = 7;
-directionalLight.shadow.camera.right = 7;
-directionalLight.shadow.camera.bottom = -7;
-directionalLight.position.set(10, 10, 10);
-scene.add(directionalLight);
+const sizes = {
+    width: 1920,
+    height: 1080
+}
+
+var ambientLight = new THREE.AmbientLight( 0xffffff, 0.2 );
+
+var ambientLight2 = new THREE.AmbientLight( 0xffffff, 0.2 );
+ambientLight2.layers.enable(LAYER.BLOCK);
+
+// block: 0.4, character: 3
 
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 3
+
+camera.add(ambientLight)
 // camera.lookAt(new THREE.Vector3(0, - 1, 0))
 scene.add(camera)
 
@@ -49,11 +53,11 @@ const raycasterFromCharacter = new THREE.Raycaster();
 
 async function addCharacter() {
     const scale = 0.3
-    let object = await loadModel(scene, "models/0128_test.fbx", scale)
-    player = new Player(object);
+    let object = await loadModel("models/rabbit.fbx", scale)
+    player = new RealPlayer(object);
     
     scene.add(player.getObject());
-    raycasterFromCharacter.set(player.getPosition, new THREE.Vector3(-1, 0, -2))
+    raycasterFromCharacter.set(player.getPosition, new THREE.Vector3(-6, 0, 0))
 }
 
 addCharacter();
@@ -61,7 +65,7 @@ addCharacter();
 const renderScene = new RenderPass(scene, camera);
 
 const bloomLayer = new THREE.Layers();
-bloomLayer.set( BLOOM_SCENE );
+bloomLayer.set( BLOOM_SCENE);
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -74,29 +78,26 @@ bloomPass.strength = 1; //intensity of glow
 bloomPass.radius = 0;
 
 let blocks = [];
-function makeAndAddBlock(color, xOffset) {
-    const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
-    const material = new THREE.MeshBasicMaterial( {color: color} );
-    const cube = new THREE.Mesh( geometry, material );
-    cube.position.x += xOffset;
-
-    blocks.push(cube);
-    scene.add( cube );
+async function makeAndAddBlock(color, xOffset) {
+    let light = new THREE.DirectionalLight(0xffffff, 0.1);
+    light.castShadow = true; // true 이면 광원이 그림자를 생성합니다. 기본값은 false 입니다.
+    light.position.set( 0, 1, 1 ).normalize();
+    let block = await loadModel("models/" + color + "_cube.fbx", 0.005);
+    let group = new THREE.Object3D();
+    group.add(block);
+    group.add(light)
+    block.position.x += xOffset;
+    blocks.push(group);
+    scene.add(group);
     //cube.layers.enable(BLOOM_SCENE);
 }
 
-async function addSpecialBlock() {
-    const scale = 0.005;
-    let object = await loadModel(scene, "models/rabbit_0213.fbx", scale)
-    object.position.x -= 3;
-    scene.add(object)
-}
+//addSpecialBlock();
 
-addSpecialBlock();
-
-makeAndAddBlock(0x00ff00, -1);
-makeAndAddBlock(0xff00ff, 2);
-makeAndAddBlock(0x0000ff, -3);
+makeAndAddBlock("basic", -1);
+makeAndAddBlock("pink", -2);
+makeAndAddBlock("purple", -3);
+makeAndAddBlock("blue", -4);
 
 let blockDestinations = [];
 
@@ -155,11 +156,9 @@ const materials = {};
 const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
 
 function darkenNonBloomed( obj ) {
-
     if ( obj.isMesh && bloomLayer.test( obj.layers ) === false ) {
         materials[ obj.uuid ] = obj.material;
         obj.material = darkMaterial;
-
     }
 }
 
@@ -187,17 +186,18 @@ finalComposer.addPass( renderScene );
 finalComposer.addPass( finalPass );
 
 
+
 const tick = () => {
     controls.update()
     renderer.render(scene, camera)
     // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
+    // 계산기  
+    window.requestAnimationFrame(tick);
     bloomComposer.renderToScreen = false;
-    scene.traverse( darkenNonBloomed );
+    scene.traverse(darkenNonBloomed);
 	//bloomComposer.render();
 	scene.traverse( restoreMaterial );
     finalComposer.render();
-
 }
 
 tick()
@@ -231,13 +231,14 @@ window.addEventListener("keydown",  function (event) {
     let planeIntersections = raycasterFromCharacter.intersectObjects(blockDestinations);
 
     blockIntersections.forEach(intersection => {
+        console.log(intersection.distance)
         if(intersection.distance < MAX_DISTANCE_FOR_INTERSECT && event.code == "Space") {
             player.tryHoldObject(intersection.object)
         }
     })
 
     blockDestinations.forEach((blockDestination) => {
-        console.log(event.code)
+     
         if(event.code == "Space") {
             player.tryPutDown(blockDestination)
         }

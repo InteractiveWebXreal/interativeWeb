@@ -10,7 +10,7 @@ const webpackMode = process.env.NODE_ENV || 'development';
 module.exports = {
 	mode: webpackMode,
 	entry: {
-		main: './src/main.js',
+		main: './src/script.js',
 	},
 	output: {
 		path: path.resolve('./dist'),
