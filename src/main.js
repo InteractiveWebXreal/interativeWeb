@@ -416,7 +416,7 @@ function fall(camera,target,controls) {
 			);
 			
 			//타겟 지점 변경
-			controls.target.set(newpos.x, newpos.y, newpos.z);
+			controls.target.set(newpos.x, newpos.y, newpos.z);//이거 때문에, 안나오는듯?
 			//카메라 위치 변경
 			camera.position.set(camnewpos.x, camnewpos.y, camnewpos.z);
 			
