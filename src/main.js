@@ -6,7 +6,10 @@ import gsap from 'gsap';
 import { PreventDragClick } from './PreventDragClick';
 import { Floor } from './Floor';
 import { Block } from './Block';
-import { Player } from './Player';
+import { Player } from './player';
+import { loadModel } from './modelLoader';
+import { RealPlayer } from './realPlayer'
+import { LAYER } from './consts/enum';
 
 // Renderer
 const canvas = document.querySelector('canvas.webgl');
@@ -26,29 +29,31 @@ cm1.scene.background = new THREE.Color(cm2.backgroundColor);
 
 // Camera
 const camera = new THREE.PerspectiveCamera(
-	75,
+	80,
 	window.innerWidth / window.innerHeight,
-	0.1,
+	0.2,
 	1000
 );
 const camera2 = camera.clone();
 //카메라 위치 세팅
 camera.position.x = 3;
-camera.position.y = 17;
+camera.position.y = 8;
 camera.position.z = -10;
 
 cm1.scene.add(camera);
 
 // Light
-const ambientLight = new THREE.AmbientLight(cm2.lightColor, 0.8);
+const ambientLight = new THREE.AmbientLight(cm2.lightColor, 0);
 cm1.scene.add(ambientLight);
 
 //SpotLight를 각 모퉁이에 배치
-const spotLightDistance = 50;
+const spotLightDistance = 150;
 const spotLight1 = new THREE.SpotLight(cm2.lightColor, 1);
+
 spotLight1.castShadow = true;
 spotLight1.shadow.mapSize.width = 2048;
 spotLight1.shadow.mapSize.height = 2048;
+
 const spotLight2 = spotLight1.clone();
 const spotLight3 = spotLight1.clone();
 const spotLight4 = spotLight1.clone();
@@ -130,27 +135,27 @@ for (let i = 0; i < numberOfBlock; i++) {
 	}
 	let block1 = new Block({
 		step: 5*i,
-		name: ` block-${ blockTypes[0]}`,
+		name: ` block-${ blockTypes[0] }`,
 		x: -2.6,
-		y: 10.5,
+		y: 5.5,
 		z:  blockZ[i],
 		type:  blockTypes[0],
 		cannonMaterial: cm1.blockMaterial,
 	});
 	let block2 = new Block({
 		step: 5*i+1,
-		name: ` block-${ blockTypes[1]}`,
+		name: ` block-${ blockTypes[1] }`,
 		x: -1.3,
-		y: 10.5,
+		y: 5.5,
 		z: blockZ[i],
 		type: blockTypes[1],
 		cannonMaterial: cm1.blockMaterial,
 	});
 	let block3 = new Block({
 		step: 5*i+2,
-		name: ` block-${ blockTypes[1]}`,
+		name: ` block-${ blockTypes[1] }`,
 		x: 0,
-		y: 10.5,
+		y: 5.5,
 		z: blockZ[i],
 		type: blockTypes[0],
 		cannonMaterial: cm1.blockMaterial,
@@ -159,7 +164,7 @@ for (let i = 0; i < numberOfBlock; i++) {
 		step: 5*i+3,
 		name: ` block-${ blockTypes[1]}`,
 		x: 1.3,
-		y: 10.5,
+		y: 5.5,
 		z: blockZ[i],
 		type: blockTypes[1],
 		cannonMaterial: cm1.blockMaterial,
@@ -168,16 +173,16 @@ for (let i = 0; i < numberOfBlock; i++) {
 		step: 5*i+4,
 		name: ` block-${ blockTypes[1]}`,
 		x: 2.6,
-		y: 10.5,
+		y: 5.5,
 		z: blockZ[i],
 		type: blockTypes[0],
 		cannonMaterial: cm1.blockMaterial,
 	});
 	objects.push(block1, block2, block3, block4, block5);
 }
-//hi
+
 // 플레이어
-const player = new Player({
+/*const player = new Player({
 	name: 'player',
 	x: 0,
 	y: 10.9,
@@ -187,9 +192,22 @@ const player = new Player({
 	mass: 3
 });
 objects.push(player);
-
+*/
+let player = null;
 // Raycaster
 const raycaster = new THREE.Raycaster();
+
+async function addCharacter() {
+    const scale = 0.3
+    let object = await loadModel("models/rabbit_0302.fbx", scale)
+    player = new RealPlayer(object);
+    
+    cm1.scene.add(player.getObject());
+    raycaster.set(player.getPosition, new THREE.Vector3(-6, 0, 0))
+}
+
+addCharacter();
+
 const mouse = new THREE.Vector2();
 function checkIntersects() {
 	raycaster.setFromCamera(mouse, camera);
@@ -354,8 +372,8 @@ function draw() {
 		renderer.render(cm1.scene, camera2);
 		camera2.position.x = player.cannonBody.position.x;
 		camera2.position.z = player.cannonBody.position.z;
-	}
-*/
+	}*/
+
 	renderer.setAnimationLoop(draw);
 }
 
@@ -369,6 +387,7 @@ function setSize() {
 // 이벤트
 const preventDragClick = new PreventDragClick(canvas);
 window.addEventListener('resize', setSize);
+/*
 canvas.addEventListener('click', e => {
 	if (preventDragClick.mouseMoved) return;
 	//clientX 사용자가 실제로 클릭한 값의 좌표
@@ -376,6 +395,30 @@ canvas.addEventListener('click', e => {
 	mouse.y = -(e.clientY / canvas.clientHeight * 2 - 1);
 	//해당 함수 기능에 대한 체크 다시
 	checkIntersects();
+});
+*/
+canvas.addEventListener("click",  function (event) {
+	
+	console.log(event);
+    
+    let directionVector = new THREE.Vector3(0, 0, 0);
+
+	let rect = canvas.getBoundingClientRect();
+
+	let x = 0;
+	let y = 0;
+	let z = -1.5;
+
+    console.log("(" + x + ", " + y + ") is clicked.");
+
+	directionVector.x = x;
+	console.log("x" + x);
+	console.log("y" + y);
+	directionVector.y = y;
+	directionVector.z = z;
+	player.move(directionVector);
+
+
 });
 
 draw();

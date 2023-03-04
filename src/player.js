@@ -51,13 +51,14 @@ export class Player extends Stuff {
 		);
 */
 		cm1.fbxLoader.load(
-			'/models/0128_test.fbx',
+			'/models/rabbit_0213.fbx',
 			fbx => {
 				// shadow
 				fbx.traverse(child => {
 					if (child.isMesh) {
 						child.castShadow = true;
 					}
+					console.log(fbx);
 
 					if(child instanceof PointLight) {
 						if(child.name === "Light" || child.name === "영역"){
@@ -67,7 +68,6 @@ export class Player extends Stuff {
 							child.intensity = 0
 						}
 					}
-					
 				});
 				
 				console.log(fbx);
