@@ -356,8 +356,9 @@ function draw() {
 					item.modelMesh.position.copy(item.cannonBody.position);
 					fall(camera,item,controls)
 				}
-				item.modelMesh.position.y += 0.15;
+				//item.modelMesh.position.y += 0.15;
 			} else {
+				drop_step = 5 * (click_num -1)+ 2;
 				if(drop_step > -1)
 					objects[drop_step].cannonBody.position.y -= 0.03;
 				item.mesh.position.copy(item.cannonBody.position);			item.mesh.quaternion.copy(item.cannonBody.quaternion);
@@ -466,19 +467,26 @@ canvas.addEventListener('click', e => {
 	checkIntersects();
 });
 */
+let click_num = 0;
+let complete = false;
 canvas.addEventListener("click",  function (event) {
-	
+
 	console.log(event);
     
     let directionVector = new THREE.Vector3(0, 0, 0);
-
-	let rect = canvas.getBoundingClientRect();
 
 	let x = 0;
 	let y = 0;
 	let z = -1.5;
 
-    console.log("(" + x + ", " + y + ") is clicked.");
+	console.log(directionVector)
+		
+	click_num = click_num + 1;
+	if(click_num >= 8){
+		z = 0;
+		complete = ture;
+	}
+	console.log(click_num);
 
 	directionVector.x = x;
 	console.log("x" + x);
