@@ -14,7 +14,7 @@ import { LAYER } from './consts/enum';
 
 const CAMERA_SPEED = 5; //해보면서 조정하자.
 const yfinalpos=0;
-let isfall=true;//임의로 테스트.
+//let isfall=true;//임의로 테스트.
 
 // Renderer
 const canvas = document.querySelector('canvas.webgl');
@@ -416,7 +416,7 @@ function fall(camera,target,controls) {
 		
 	   
 	  
-		if(isfall && target.modelMesh.position >yfinalpos) {
+		if(complete && target.modelMesh.position >yfinalpos) {
 
 			//캐릭터 추락
 			//이건 일단 좌로 이동할 때인데, 
@@ -484,7 +484,7 @@ canvas.addEventListener("click",  function (event) {
 	click_num = click_num + 1;
 	if(click_num >= 8){
 		z = 0;
-		complete = ture;
+		complete = true;
 	}
 	console.log(click_num);
 
