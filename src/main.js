@@ -13,7 +13,7 @@ import { LAYER } from './consts/enum';
 
 
 const CAMERA_SPEED = 5; //해보면서 조정하자.
-const yfinalpos=-20;
+const yfinalpos=-300;
 //let isfall=true;//임의로 테스트.
 
 // Renderer
@@ -519,7 +519,7 @@ function fall(camera,target,controls) {
 			target.getPosition().x=newpos.x;
 			target.getPosition().y=newpos.y;
 			target.getPosition().z=newpos.z;
-			
+
 			//카메라 위치 변경
 			camera.position.set(camnewpos.x, camnewpos.y, camnewpos.z);
 			console.log(target.getPosition())
