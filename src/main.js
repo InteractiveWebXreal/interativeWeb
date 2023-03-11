@@ -13,7 +13,7 @@ import { LAYER } from './consts/enum';
 
 
 const CAMERA_SPEED = 5; //해보면서 조정하자.
-const yfinalpos=0;
+const yfinalpos=-20;
 //let isfall=true;//임의로 테스트.
 
 // Renderer
@@ -206,9 +206,15 @@ async function addCharacter() {
     const scale = 0.3
     let object = await loadModel("models/rabbit_0302.fbx", scale)
     player = new RealPlayer(object);
+	
     
     cm1.scene.add(player.getObject());
     raycaster.set(player.getPosition, new THREE.Vector3(-6, 0, 0))
+
+	//objects.push(player);
+	
+
+
 }
 
 addCharacter();
@@ -337,7 +343,7 @@ function checkClickedObject(mesh) {
 // 그리기
 const clock = new THREE.Clock();
 
-function draw() {
+async function draw() {
 	const delta = clock.getDelta();
 
 	if (cm1.mixer) cm1.mixer.update(delta);
@@ -348,26 +354,94 @@ function draw() {
 	if (delta < 0.012) cannonStepTime = 1/120;
 	cm1.world.step(cannonStepTime, delta, 3);
 
+	//await addCharacter();
+	//console.log(player)
+	if(player != null) {
+    console.log("last one? position:", player.getPosition())
+	console.log("complete?: ",complete)
+
+	if(complete){
+		fall(camera,player,controls)
+
+	}
+
+
+
+	}
+
 	objects.forEach(item => {
+		//console.log("foreach: ",item)
+		if(item.name===RealPlayer){
+			console.log("rp",RealPlayer.getPosition)
+			console.log("rp",RealPlayer.getPosition)
+			console.log("rp",RealPlayer.getPosition)
+			console.log("rp",RealPlayer.getPosition)
+			console.log("rp",RealPlayer.getPosition)
+		}
+		if(item.name==="RealPlayer"){
+			console.log("rp!!!!!!!!!!!!",RealPlayer.getPosition)
+			console.log("rp!!!!!!!!!!!!",RealPlayer.getPosition)
+			console.log("rp!!!!!!!!!!!!",RealPlayer.getPosition)
+			console.log("rp!!!!!!!!!!!!",RealPlayer.getPosition)
+			console.log("rp!!!!!!!!!!!!",RealPlayer.getPosition)
+			console.log("rp!!!!!!!!!!!!",RealPlayer.getPosition)
+		}
+
+
+		
+	
 		if (item.cannonBody) {
-			if (item.name === 'player') {
+			if (item === 'Player') {
+				 console.log("hello!!")
+				 console.log("hello!!")
+				 console.log("hello!!")
+				 console.log("hello!!")
+
 				if (item.modelMesh) {
 					//cannonBody의 위치를 Mesh가 따라가도록
 					item.modelMesh.position.copy(item.cannonBody.position);
 					fall(camera,item,controls)
 				}
 				//item.modelMesh.position.y += 0.15;
-			} else {
+			} 
+			
+			else {
+
+			///	if(complete){
+					//읽을 수만 player.getPosition()
+					//3차원 벡터로 받아와서 - 그 벡터.x는 .y는 .z는 getPosition().x
+				//	player.getPosition().y-=3;
+				//}
+				
 				drop_step = 5 * (click_num -1)+ 2;
-				if(drop_step > -1)
+				//console.log("prev-dropstep?",drop_step)
+				if(drop_step > -1)//블록 5*10  떨어져야 할 블록
 					objects[drop_step].cannonBody.position.y -= 0.03;
-				item.mesh.position.copy(item.cannonBody.position);			item.mesh.quaternion.copy(item.cannonBody.quaternion);
+					//console.log("last one?:",objects[objects.length-1])
+					//console.log(objects.length)
+					//console.log(objects[objects.length-1])
+					
+				//	await addCharacter();
+					//console.log("last one? position:", player.getPosition())
+
+					//let objpos=objects[objects.length-1].getPosition
+					//console.log("what is obj pos?",objpos)
+
+					//fall(camera,objects[objects.length-1],controls)
+				//	objects[-1].cannonBody.position.y -= 0.03;
+				//objects[-1].position.y -= 0.03;
+				//console.log("dropstep?",drop_step)
+
+				item.mesh.position.copy(item.cannonBody.position);			
+				item.mesh.quaternion.copy(item.cannonBody.quaternion);
 
 				if (item.modelMesh) {
 					item.modelMesh.position.copy(item.cannonBody.position);
 					item.modelMesh.quaternion.copy(item.cannonBody.quaternion);
 				}
 			}
+			//fall(camera,item,controls)
+			//console.log("item.cannonBody: ",item)
 		}
 	});
 
@@ -398,6 +472,8 @@ function setSize() {
 
 function fall(camera,target,controls) {
 
+	console.log("target",target)
+
         
 	if(target != null) {
 
@@ -405,7 +481,10 @@ function fall(camera,target,controls) {
 		const origpos = new THREE.Vector3().copy(camera.position);
 
 		//타겟 position
-		const targetpos = new THREE.Vector3().copy(target.modelMesh.position);
+		//const targetpos = new THREE.Vector3().copy(target.modelMesh.position);
+		const targetpos = new THREE.Vector3().copy(target.getPosition());
+		console.log("orig",origpos,"targpos",targetpos)
+		//const targetpos =target.getPosition();
 
 		//-----------------------------------------------------------------------------------------------------------------------------
 		
@@ -413,10 +492,10 @@ function fall(camera,target,controls) {
 
 		//타겟모델 - 카메라 : 방향벡터
 		const dir = new THREE.Vector3(origpos.x - targetpos.x, origpos.y - targetpos.y, origpos.z - targetpos.z).normalize();
-		
+		console.log(dir)
 	   
 	  
-		if(complete && target.modelMesh.position >yfinalpos) {
+		if(target.getPosition().y >yfinalpos) {
 
 			//캐릭터 추락
 			//이건 일단 좌로 이동할 때인데, 
@@ -437,8 +516,13 @@ function fall(camera,target,controls) {
 			
 			//타겟 지점 변경
 			controls.target.set(newpos.x, newpos.y, newpos.z);//이거 때문에, 안나오는듯?
+			target.getPosition().x=newpos.x;
+			target.getPosition().y=newpos.y;
+			target.getPosition().z=newpos.z;
+			
 			//카메라 위치 변경
 			camera.position.set(camnewpos.x, camnewpos.y, camnewpos.z);
+			console.log(target.getPosition())
 			
 		}
 		

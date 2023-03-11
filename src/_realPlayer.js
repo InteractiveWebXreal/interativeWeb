@@ -26,6 +26,7 @@ export class RealPlayer {
         return this.group.position;
     }
 
+
     move(value) {
         console.log("move")
         this.group.position.x += value.x; 
